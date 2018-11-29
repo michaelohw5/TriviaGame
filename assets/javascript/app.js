@@ -8,8 +8,12 @@ $(document).ready(function () {
         , { ans1: "a17", ans2: "a18", ans3: "a19", ans4: "a20" } //A5
         , { ans1: "a21", ans2: "a22", ans3: "a23", ans4: "a24" } //A6
         , { ans1: "a25", ans2: "a26", ans3: "a27", ans4: "a28" }]; //A7
+    var correctAnswers = [1, 2, 3, 4, 1, 2, 3];
+    var questionIndex;
     var currentQ;
     var currentA;
+    var numCorrect = 0;
+    var numWrong = 0;
     var timerElem = $("#timer");
     var startBtn = $("#start");
     var ans1 = $("#answer1");
@@ -26,13 +30,24 @@ $(document).ready(function () {
     } //works cuz copy pasta
 
     var chooseQuestion = function() {
-        var temp = randNumGen(0, 6);
-        currentQ = questions[temp];
-        currentA = answers[temp];
+        questionIndex = randNumGen(0, 6);
+        currentQ = questions[questionIndex];
+        currentA = answers[questionIndex];
         ans1.text(currentA.ans1);
         ans2.text(currentA.ans2);
         ans3.text(currentA.ans3);
         ans4.text(currentA.ans4);
+    }
+
+    var compareAnswer = function() {
+        if (chosenAns === correctAnswers[questionIndex]) {
+            console.log("yay");
+            numCorrect++;
+        }
+        else {
+            console.log("nay");
+            numWrong++;
+        }
     }
 
     //button functions
@@ -42,18 +57,22 @@ $(document).ready(function () {
 
     ans1.click(function () {
         chosenAns = 1;
+        compareAnswer();
     }); //answer #1
 
     ans2.click(function () {
         chosenAns = 2;
+        compareAnswer();
     }); //answer #2
 
     ans3.click(function () {
         chosenAns = 3;
+        compareAnswer();
     }); //answer #3
 
     ans4.click(function () {
         chosenAns = 4;
+        compareAnswer();
     }); //answer #4
 
     var initGame = function () {
