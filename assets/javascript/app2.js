@@ -7,8 +7,8 @@ var game = {
     ans3: $("#answer3"),
     ans4: $("#answer4"),
     qSection: $("#question"),
-    maxTime: 5,
-    timeRem: 5,
+    maxTime: 15,
+    timeRem: 15,
     timer1: null,
     timer2: null,
     timer2max: 3,
@@ -94,7 +94,9 @@ var game = {
 
     chooseQ: function () {
         var chosenQid = 0;
-        if (game.state.newQuestions.length === undefined) {
+        if (game.state.newQuestions.length === 0) {
+            game.stopTimer1();
+            game.stopTimer2();
             game.qSection.text("Game Over! You had " + game.state.numCorrect +
                 " Correct Answers, and " + game.state.numWrong + " Wrong Answers.");
         }
@@ -105,9 +107,8 @@ var game = {
             game.state.currentQId = theQ.qid;
             game.state.potentialAnswers = theQ.potentialA;
             game.state.answer = theQ.a;
-            game.questions.shift();
+            game.state.newQuestions.shift();
             game.display();
-            console.log(game.state.questionsDone);
         }
 
     },
@@ -148,10 +149,10 @@ var game = {
         game.state.questionsDone = [];
         game.state.numQuestionsDone = 0;
         game.state.chosenAns = "";
-        game.maxTime = 5;
-        game.timeRem = 5;
-        game.timer2max = 5;
-        game.timer2left = 5;
+        game.maxTime = 3;
+        game.timeRem = 3;
+        game.timer2max = 3;
+        game.timer2left = 3;
     },
 
 
@@ -192,6 +193,7 @@ var game = {
             game.timeRem = game.maxTime;
             game.timerElem.text(game.timeRem);
             game.timer1Run();
+            console.log(game.state.newQuestions);
         }
     },
 
@@ -221,6 +223,7 @@ var game = {
 //====START BUTTON FUNCTION====
 game.startBtn.click(function () {
     game.resetGame();
+    game.startBtn.text("Restart");
     game.stopTimer1();
     game.timer1Run();
     game.play();
