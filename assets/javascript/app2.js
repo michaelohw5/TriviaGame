@@ -79,6 +79,7 @@ var game = {
 
 
     state: {
+        newQuestions: [],
         currentObj: {},
         currentQId: 0,
         currentQ: "",
@@ -93,27 +94,22 @@ var game = {
 
     chooseQ: function () {
         var chosenQid = 0;
-        if (game.state.numQuestionsDone < 8) {
-            chosenQid = game.randNumGen(0, game.questions.length - 1)
-            if (game.state.questionsDone.includes(chosenQid)) {
-                game.chooseQ();
-            }
-            else {
-                var theQ = game.questions[chosenQid];
-                game.state.currentObj = theQ;
-                game.state.currentQ = theQ.q;
-                game.state.currentQId = theQ.qid;
-                game.state.potentialAnswers = theQ.potentialA;
-                game.state.answer = theQ.a;
-                game.state.questionsDone.push(game.state.currentQId);
-                game.display();
-                console.log(game.state.questionsDone);
-            }
-        }
-        else {
+        if (game.state.newQuestions.length === undefined) {
             game.qSection.text("Game Over! You had " + game.state.numCorrect +
                 " Correct Answers, and " + game.state.numWrong + " Wrong Answers.");
         }
+        else {
+            var theQ = game.questions[chosenQid];
+            game.state.currentObj = theQ;
+            game.state.currentQ = theQ.q;
+            game.state.currentQId = theQ.qid;
+            game.state.potentialAnswers = theQ.potentialA;
+            game.state.answer = theQ.a;
+            game.questions.shift();
+            game.display();
+            console.log(game.state.questionsDone);
+        }
+
     },
 
     compareAnswer: function () {
@@ -137,6 +133,7 @@ var game = {
     },
 
     initGame: function () {
+        game.state.newQuestions = game.questions;
         game.chooseQ();
     },
 
@@ -157,6 +154,15 @@ var game = {
         game.timer2left = 5;
     },
 
+
+    timer2Run: function () {
+        game.timer2 = setInterval(game.decrement2, 1000);
+    },
+
+    stopTimer2: function () {
+        clearInterval(game.timer2);
+    },
+
     timer1Run: function () {
         game.timer1 = setInterval(game.decrement, 1000);
     },
@@ -165,52 +171,49 @@ var game = {
         clearInterval(game.timer1);
     },
 
-    // timer2Run: function () {
-    //     game.timer2 = setInterval(game.decrement2, 1000);
-    // },
-
-    // stopTimer2: function () {
-    //     clearInterval(game.timer2);
-    // },
-
     decrement: function () {
         game.timeRem--;
         game.timerElem.text(game.timeRem);
         if (game.timeRem === 0) {
             game.state.numWrong++;
             game.qSection.text("Too Bad!! Correct Answer is: " + game.state.answer);
-            game.nextQTimer();
+            //game.nextQTimer();
+            game.timer2Run();
             game.stopTimer1();
         }
     },
 
-    nextQTimer: function () {
-        game.timer2left = game.timer2max;
-        setInterval(function () {
-            game.timer2left--;
-            if (game.timer2left === 0) {
-                game.chooseQ();
-                clearInterval(game.timer2left);
-                game.timeRem = game.maxTime;
-                game.timerElem.text(game.timeRem);
-                game.timer1Run();
-            }
-        }, 1000);
+    decrement2: function () {
+        game.timer2left--;
+        if (game.timer2left === 0) {
+            game.stopTimer2();
+            game.chooseQ();
+            game.timer2left = game.timer2max;
+            game.timeRem = game.maxTime;
+            game.timerElem.text(game.timeRem);
+            game.timer1Run();
+        }
     },
 
-    // decrement2: function () {
-    //     game.timer2left--;
-    //     if (game.timer2left === 0) {
-    //         game.chooseQ();
-    //         game.stopTimer2();
-    //         game.timer2left = game.timer2max;
-    //     }
+    // nextQTimer: function () {
+    //     game.timer2left = game.timer2max;
+    //     setInterval(function () {
+    //         game.timer2left--;
+    //         if (game.timer2left === 0) {
+    //             game.chooseQ();
+    //             clearInterval(game.timer2left);
+    //             game.timeRem = game.maxTime;
+    //             game.timerElem.text(game.timeRem);
+    //             game.timer1Run();
+    //         }
+    //     }, 1000);
     // },
+
 
     play: function () {
         $(document).ready(function () {
             game.initGame();
-            console.log(game.state);
+            
         })
     } //end of play
 
@@ -228,29 +231,33 @@ game.ans1.click(function () {
     game.state.chosenAns = game.ans1.text();
     game.compareAnswer();
     game.stopTimer1();
-    game.nextQTimer();
-    console.log(game.state.chosenAns);
+    game.stopTimer2();
+    game.timer2Run();
+    
 });
 game.ans2.click(function () {
     game.state.chosenAns = game.ans2.text();
     game.compareAnswer();
     game.stopTimer1();
-    game.nextQTimer();
-    console.log(game.state.chosenAns);
+    game.stopTimer2();
+    game.timer2Run();
+    
 });
 game.ans3.click(function () {
     game.state.chosenAns = game.ans3.text();
     game.compareAnswer();
     game.stopTimer1();
-    game.nextQTimer();
-    console.log(game.state.chosenAns);
+    game.stopTimer2();
+    game.timer2Run();
+    
 });
 game.ans4.click(function () {
     game.state.chosenAns = game.ans4.text();
     game.compareAnswer();
     game.stopTimer1();
-    game.nextQTimer();
-    console.log(game.state.chosenAns);
+    game.stopTimer2();
+    game.timer2Run();
+    
 });
 
 
