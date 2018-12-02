@@ -1,3 +1,6 @@
+var maintimer;
+var subtimer;
+
 var game = {
 
     timerElem: $("#timer"),
@@ -9,16 +12,10 @@ var game = {
     qSection: $("#question"),
     maxTime: 15,
     timeRem: 15,
-    timer1: null,
-    timer2: null,
+    // timer1: null,
+    // timer2: null,
     timer2max: 3,
     timer2left: 3,
-    //rand number generator
-    randNumGen: function getRandomIntInclusive(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
-    }, //works cuz copy pasta
 
     questions: [
         {
@@ -95,12 +92,14 @@ var game = {
     chooseQ: function () {
         var chosenQid = 0;
         if (game.state.newQuestions.length === 0) {
-            game.stopTimer1();
-            game.stopTimer2();
+            game.stopTimer2(); // why wont you stop
+            game.stopTimer1(); // please stop
+            clearInterval(maintimer); // i tell you again stop
+            clearInterval(subtimer); // seriously stop
             game.qSection.text("Game Over! You had " + game.state.numCorrect +
                 " Correct Answers, and " + game.state.numWrong + " Wrong Answers.");
         }
-        else {
+        else if (game.state.newQuestions.length > 0) {
             var theQ = game.questions[chosenQid];
             game.state.currentObj = theQ;
             game.state.currentQ = theQ.q;
@@ -157,19 +156,19 @@ var game = {
 
 
     timer2Run: function () {
-        game.timer2 = setInterval(game.decrement2, 1000);
+        subtimer = setInterval(game.decrement2, 1000);
     },
 
     stopTimer2: function () {
-        clearInterval(game.timer2);
+        clearInterval(subtimer);
     },
 
     timer1Run: function () {
-        game.timer1 = setInterval(game.decrement, 1000);
+        maintimer = setInterval(game.decrement, 1000);
     },
 
     stopTimer1: function () {
-        clearInterval(game.timer1);
+        clearInterval(maintimer);
     },
 
     decrement: function () {
